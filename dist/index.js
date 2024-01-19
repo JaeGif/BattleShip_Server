@@ -8,28 +8,28 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const orderHandler_1 = __importDefault(require("./handlers/orderHandler"));
+const cors_1 = __importDefault(require("cors"));
 //For env File
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8000;
 const server = http_1.default.createServer(app);
-app.get('/', (req, res) => {
-    res.send('Welcome to Express & TypeScript Server');
-});
+app.use((0, cors_1.default)());
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: '*',
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         allowedHeaders: ['*'],
-        credentials: true,
     },
 });
-const onConnection = (socket) => {
+function onConnection(socket) {
     console.log('User connected to', socket.id);
     const orderHandler = new orderHandler_1.default(io, socket);
     orderHandler.invokeListeners();
-};
-io.on('connection', (socket) => onConnection(socket));
-app.listen(port, () => {
-    console.log(`Server is Fire at http://localhost:${port}`);
+}
+io.on('connection', (socket) => {
+    onConnection(socket);
+});
+server.listen(port, () => {
+    console.log(`Server live`);
 });

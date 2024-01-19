@@ -30,5 +30,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server live at http://localhost:${port}`);
+  console.log(`Server live`);
 });
